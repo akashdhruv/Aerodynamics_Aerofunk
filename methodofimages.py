@@ -31,25 +31,32 @@ sourceimage=af.source(st,xs,-ys)
 vortex=af.vortex(st,xs,ys)
 vorteximage=af.vortex(-st,xs,-ys)
 
+vortex2=af.vortex(-st,-xs,ys)
+vorteximage2=af.vortex(st,-xs,-ys)
+
 source.vel(X,Y)
 sourceimage.vel(X,Y)
 
 vortex.vel(X,Y)
 vorteximage.vel(X,Y)
+vortex2.vel(X,Y)
+vorteximage2.vel(X,Y)
 
 source.psi(X,Y)
 sourceimage.psi(X,Y)
 
 vortex.psi(X,Y)
 vorteximage.psi(X,Y)
+vortex2.psi(X,Y)
+vorteximage2.psi(X,Y)
 
 """u=source.u+sourceimage.u
 v=source.v+sourceimage.v
 psi=source.psi+sourceimage.psi"""
 
-u=vortex.u+vorteximage.u
-v=vortex.v+vorteximage.v
-psi=vortex.psi+vorteximage.psi
+u=vortex.u+vorteximage.u+vortex2.u+vorteximage2.u
+v=vortex.v+vorteximage.v+vortex2.v+vorteximage2.v
+psi=vortex.psi+vorteximage.psi+vortex2.psi+vorteximage2.psi
 
 size = 10
 plt.figure(num=0,figsize=(size,(yEnd-yStart)/(xEnd-xStart)*size))
