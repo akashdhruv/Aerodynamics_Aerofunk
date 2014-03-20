@@ -6,6 +6,8 @@ from scipy import integrate
 
 Uinf=1
 
+xmesh,ymesh=np.meshgrid(np.linspace(-5,5,100),np.linspace(-5,5,100))
+
 Np=100
 r=1
 
@@ -26,8 +28,10 @@ def J(pi,pj):
     return integrate.quad(lambda s:func(s),0.,pj.length)[0]
 
 
+
 xb=r*np.cos(np.linspace(0,2*pi,Np+1))
 yb=r*np.sin(np.linspace(0,2*pi,Np+1))
+
 
 panel=np.empty(Np,dtype=object)
 
@@ -36,8 +40,9 @@ for i in range(Np):
 
 plt.figure()
 plt.plot(xb,yb)
-plt.scatter([p.xa for p in panel],[p.ya for p in panel],c='#CD2305')
-plt.scatter([p.xc for p in panel],[p.yc for p in panel],c='k')
+"""plt.scatter([p.xa for p in panel],[p.ya for p in panel],c='#CD2305')
+plt.scatter([p.xc for p in panel],[p.yc for p in panel],c='k')"""
+plt.scatter(xmesh,ymesh)
 plt.axis('equal')
 plt.show()
 
