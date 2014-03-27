@@ -5,7 +5,7 @@ from scipy import integrate
 
 
 
-def I(pi,pj):
+"""def I(pi,pj):
     def func(s):
         return (+(pi.xc-(pj.xa-sin(pj.beta)*s))*cos(pi.beta)\
 				+(pi.yc-(pj.ya+cos(pj.beta)*s))*sin(pi.beta))\
@@ -19,7 +19,7 @@ def J(pi,pj):
 				+(pi.yc-(pj.ya+cos(pj.beta)*s))*cos(pi.beta))\
 			   /((pi.xc-(pj.xa-sin(pj.beta)*s))**2\
 			   + (pi.yc-(pj.ya+cos(pj.beta)*s))**2)
-    return integrate.quad(lambda s:func(s),0.,pj.length)[0]
+    return integrate.quad(lambda s:func(s),0.,pj.length)[0] """
 
 
 class doublet:

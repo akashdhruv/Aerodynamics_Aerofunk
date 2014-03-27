@@ -6,7 +6,6 @@ from scipy import integrate
 
 Uinf=1
 
-xmesh,ymesh=np.meshgrid(np.linspace(-5,5,100),np.linspace(-5,5,100))
 
 Np=100
 r=1
@@ -40,9 +39,8 @@ for i in range(Np):
 
 plt.figure()
 plt.plot(xb,yb)
-"""plt.scatter([p.xa for p in panel],[p.ya for p in panel],c='#CD2305')
-plt.scatter([p.xc for p in panel],[p.yc for p in panel],c='k')"""
-plt.scatter(xmesh,ymesh)
+plt.scatter([p.xa for p in panel],[p.ya for p in panel],c='#CD2305')
+plt.scatter([p.xc for p in panel],[p.yc for p in panel],c='k')
 plt.axis('equal')
 plt.show()
 
