@@ -75,20 +75,22 @@ def NACA(naca,c,n):
     return X,Z
 
 
-x1,z1=NACA("0012",1,30)
+naca=[0,0,1,2]
+x1,z1=NACA(naca,1,30)
 plt.figure()
+plt.subplot(3,1,1)
 plt.plot(x1,z1)
 plt.axis("equal")
 plt.show()
 
 x2,z2,=NACA("4412",1,40)
-plt.figure()
+plt.subplot(3,1,2)
 plt.plot(x2,z2)
 plt.axis("equal")
 plt.show()   
 
-x3,z3=NACA("4112",2,60)
-plt.figure()
+x3,z3=NACA("4112",1,60)
+plt.subplot(3,1,3)
 plt.plot(x3,z3)
 plt.axis("equal")
 plt.show()      
