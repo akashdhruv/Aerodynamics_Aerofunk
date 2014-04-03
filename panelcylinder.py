@@ -6,7 +6,10 @@ from scipy import integrate
 
 Uinf=1
 
-xmesh,ymesh=np.meshgrid(np.linspace(-5,5,100),np.linspace(-5,5,100))
+<<<<<<< HEAD
+xmesh,ymesh=np.meshgrid(np.linspace(-5,5,50),np.linspace(-5,5,50))
+=======
+>>>>>>> 07a4b4b0b76ff05ae008c08df949ef75d8f06935
 
 Np=100
 r=1
@@ -31,6 +34,9 @@ def J(pi,pj):
 
 xb=r*np.cos(np.linspace(0,2*pi,Np+1))
 yb=r*np.sin(np.linspace(0,2*pi,Np+1))
+zb=np.zeros(np.size(xb))
+for i in range(Np+1):
+    zb[i]=i
 
 
 panel=np.empty(Np,dtype=object)
@@ -40,9 +46,8 @@ for i in range(Np):
 
 plt.figure()
 plt.plot(xb,yb)
-"""plt.scatter([p.xa for p in panel],[p.ya for p in panel],c='#CD2305')
-plt.scatter([p.xc for p in panel],[p.yc for p in panel],c='k')"""
-plt.scatter(xmesh,ymesh)
+plt.scatter([p.xa for p in panel],[p.ya for p in panel],c='#CD2305')
+plt.scatter([p.xc for p in panel],[p.yc for p in panel],c='k')
 plt.axis('equal')
 plt.show()
 
@@ -78,8 +83,7 @@ for i in range(Np):
 
 for i in range(Np):
     panel[i].Cp = 1 - (panel[i].Vt/Uinf)**2
-    
-    
+       
 
 plt.figure()
 plt.scatter([p.xc for p in panel],[p.Cp for p in panel])
