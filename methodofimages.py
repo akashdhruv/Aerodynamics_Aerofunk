@@ -22,14 +22,14 @@ vFreestream = Uinf*sin(alpha)
 psiFreestream = + Uinf*cos(alpha)*Y - Uinf*sin(alpha)*X
 
 st=1.0
-xs=0.0
+xs=1.0
 ys=1.0
 
 source=af.source(st,xs,ys)
 sourceimage=af.source(st,xs,-ys)
 
-vortex=af.vortex(st,xs,ys)
-vorteximage=af.vortex(-st,xs,-ys)
+vortex1=af.vortex(st,xs,ys)
+vorteximage1=af.vortex(-st,xs,-ys)
 
 vortex2=af.vortex(-st,-xs,ys)
 vorteximage2=af.vortex(st,-xs,-ys)
@@ -37,16 +37,16 @@ vorteximage2=af.vortex(st,-xs,-ys)
 source.vel(X,Y)
 sourceimage.vel(X,Y)
 
-vortex.vel(X,Y)
-vorteximage.vel(X,Y)
+vortex1.vel(X,Y)
+vorteximage1.vel(X,Y)
 vortex2.vel(X,Y)
 vorteximage2.vel(X,Y)
 
 source.psi(X,Y)
 sourceimage.psi(X,Y)
 
-vortex.psi(X,Y)
-vorteximage.psi(X,Y)
+vortex1.psi(X,Y)
+vorteximage1.psi(X,Y)
 vortex2.psi(X,Y)
 vorteximage2.psi(X,Y)
 
@@ -54,9 +54,9 @@ vorteximage2.psi(X,Y)
 v=source.v+sourceimage.v
 psi=source.psi+sourceimage.psi"""
 
-u=vortex.u+vorteximage.u+vortex2.u+vorteximage2.u
-v=vortex.v+vorteximage.v+vortex2.v+vorteximage2.v
-psi=vortex.psi+vorteximage.psi+vortex2.psi+vorteximage2.psi
+u=vortex1.u+vortex2.u+vorteximage1.u+vorteximage2.u
+v=vortex1.v+vortex2.v+vorteximage1.v+vorteximage2.v
+psi=vortex1.psi+vortex2.psi+vorteximage1.psi+vorteximage2.psi
 
 size = 10
 plt.figure(num=0,figsize=(size,(yEnd-yStart)/(xEnd-xStart)*size))
@@ -65,8 +65,8 @@ plt.ylabel('y',fontsize=16)
 plt.xlim(xStart,xEnd)
 plt.ylim(yStart,yEnd)
 plt.streamplot(X,Y,u,v,density=2.0,linewidth=1,arrowsize=1,arrowstyle='->')
-plt.scatter(vortex.x,vortex.y,c='#CD2305',s=80,marker='o')
-plt.scatter(vorteximage.x,vorteximage.y,c='#CD2305',s=80,marker='D')
+plt.scatter([vortex1.x,vorteximage1.x],[vortex1.y,vorteximage1.y],c='#CD2305',s=80,marker='o')
+plt.scatter([vortex2.x,vorteximage2.x],[vortex2.y,vorteximage2.y],c='#CD2305',s=80,marker='o')
 plt.axhline(0.0,color='k',linestyle='--',linewidth=4);
 plt.axis('equal')
 plt.show()
