@@ -118,9 +118,9 @@ def kuttaarray(p):
     B = np.zeros(N+1,dtype=float)
     for j in range(N):
         if (j==0):
-            B[j] = 0.5/pi*I(p[N-1].xc,p[N-1].yc,p[j],sin(p[N-1].beta),-cos(p[N-1].beta))
+            B[j] = 0.5/pi*I(p[N-1].xc,p[N-1].yc,p[j],-sin(p[N-1].beta),cos(p[N-1].beta))
         elif (j==N-1):
-            B[j] = 0.5/pi*I(p[0].xc,p[0].yc,p[j],sin(p[0].beta),-cos(p[0].beta))
+            B[j] = 0.5/pi*I(p[0].xc,p[0].yc,p[j],-sin(p[0].beta),cos(p[0].beta))
         else:
             B[j] = 0.5/pi*I(p[0].xc,p[0].yc,p[j],-sin(p[0].beta),+cos(p[0].beta))\
                 + 0.5/pi*I(p[N-1].xc,p[N-1].yc,p[j],-sin(p[N-1].beta),+cos(p[N-1].beta))
@@ -158,7 +158,7 @@ def tvel(p,fs,gamma):
         for j in range(N):
             if (i!=j):
                 A[i,j] = 0.5/pi*I(p[i].xc,p[i].yc,p[j],-sin(p[i].beta),cos(p[i].beta))
-                A[i,N] -= 0.5/pi*I(p[i].xc,p[i].yc,p[j],+cos(p[i].beta),-sin(p[i].beta))
+                A[i,N] -= 0.5/pi*I(p[i].xc,p[i].yc,p[j],+cos(p[i].beta),+sin(p[i].beta))
     
     Rhs = fs.uinf*np.sin([fs.alpha-pp.beta for pp in p])
     var = np.array([pp.sigma for pp in p])
@@ -189,7 +189,7 @@ def panelmethod(xp,yp):
     plt.show()
 
     uinf=1.0
-    alpha=5.0
+    alpha=1.0
 
     fstream=freestream(uinf,alpha)
 
@@ -210,16 +210,106 @@ def panelmethod(xp,yp):
     plt.plot([p.xc for p in panel],[p.Cp for p in panel])
     plt.gca().invert_yaxis()
     plt.show()
+    
+    return Cl
+
+def getVelocityField(panel,freestream,gamma,X,Y):
+    Nx,Ny = X.shape
+    u,v = np.empty((Nx,Ny),dtype=float),np.empty((Nx,Ny),dtype=float)
+    for i in range(Nx):
+        for j in range(Ny):
+            u[i,j] = freestream.uinf*cos(freestream.alpha)\
+				+ 0.5/pi*sum([p.sigma*I(X[i,j],Y[i,j],p,1,0) for p in panel])
+            v[i,j] = freestream.uinf*sin(freestream.alpha)\
+				+ 0.5/pi*sum([p.sigma*I(X[i,j],Y[i,j],p,0,1) for p in panel])
+    return u,v
         
         
 """_____________________________MAIN___________________________"""
 
-N=20
+N=10
 c=1
-naca=[0,0,1,2]
+naca=[4,4,1,2]
 
 xp,yp=NACA(naca,c,N)
-panelmethod(xp,yp)
+#Cl=panelmethod(xp,yp)
+M=len(xp)
+
+panel=np.empty(M-1,dtype=object)
+
+for i in range(M-1):
+    panel[i]=af.panel(xp[i],yp[i],xp[i+1],yp[i+1])
 
 
+plt.figure
+plt.plot(xp,yp)
+plt.scatter([p.xc for p in panel],[p.yc for p in panel])
+plt.axis("equal")
+plt.show()
 
+
+uinf=1.0
+alpha=0.0
+
+fstream=freestream(uinf,alpha)
+
+A=buildA(panel)
+Rhs=buildrhs(panel,fstream)
+    
+var = np.linalg.solve(A,Rhs)
+for i in range(len(panel)):
+    panel[i].sigma = var[i]
+
+gamma=var[-1]
+tvel(panel,fstream,gamma)
+cp(panel,fstream)
+
+Cl = gamma*sum([p.length for p in panel])/(0.5*fstream.uinf)
+
+plt.figure()
+plt.plot([p.xc for p in panel],[p.Cp for p in panel])
+plt.gca().invert_yaxis()
+plt.show()
+
+Nx,Ny = 20,20
+valX,valY = 1.0,2.0
+
+xmin,xmax = min([p.xa for p in panel]),max([p.xa for p in panel])
+ymin,ymax = min([p.ya for p in panel]),max([p.ya for p in panel])
+
+xStart,xEnd = xmin-valX*(xmax-xmin) ,xmax+valX*(xmax-xmin)
+yStart,yEnd = ymin-valY*(ymax-ymin),ymax+valY*(ymax-ymin)
+
+X,Y = np.meshgrid(np.linspace(xStart,xEnd,Nx),np.linspace(yStart,yEnd,Ny))
+
+
+u,v = getVelocityField(panel,fstream,gamma,X,Y)
+
+size=10
+plt.figure(figsize=(size,(yEnd-yStart)/(xEnd-xStart)*size))
+plt.xlabel('x',fontsize=16)
+plt.ylabel('y',fontsize=16)
+
+plt.streamplot(X,Y,u,v,density=1,linewidth=1,arrowsize=1,arrowstyle='->')
+plt.fill([p.xa for p in panel],[p.ya for p in panel],'ko-',linewidth=2,zorder=2)
+plt.xlim(xStart,xEnd)
+plt.ylim(yStart,yEnd)
+plt.axis("equal")
+plt.title('Streamlines around a NACA 0012 airfoil, '+r'$\alpha=$'+str(alpha));
+plt.show()
+
+Cp = 1.0-(u**2+v**2)/freestream.uinf**2
+size=12
+plt.figure(figsize=(1.1*size,(yEnd-yStart)/(xEnd-xStart)*size))
+plt.xlabel('x',fontsize=16)
+plt.ylabel('y',fontsize=16)
+contf = plt.contourf(X,Y,Cp,levels=np.linspace(-2.0,1.0,100),extend='both')
+cbar = plt.colorbar(contf)
+cbar.set_label('$C_p$',fontsize=16)
+cbar.set_ticks([-2.0,-1.0,0.0,1.0])
+plt.fill([p.xc for p in panel],[p.yc for p in panel],'ko-',linewidth=2,zorder=2)
+plt.xlim(xStart,xEnd)
+plt.ylim(yStart,yEnd)
+plt.axis("equal")
+plt.title('Contour of pressure field');
+plt.show()
